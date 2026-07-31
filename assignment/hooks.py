@@ -7,7 +7,11 @@ app_license = "mit"
 
 # Apps
 # ------------------
-
+doc_events = {
+    "ToDo": {
+        "validate": "assignment.assignment.doctype.custom_assigment.custom_assigment.executePrint"
+    }       
+}
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
