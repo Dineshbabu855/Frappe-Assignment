@@ -2,32 +2,32 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
- "creation": "2026-07-31 13:31:46.200014",
+ "creation": "2026-08-03 16:09:43.376839",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "description",
-  "age"
+  "name1",
+  "table_adpz"
  ],
  "fields": [
   {
-   "fieldname": "description",
+   "fieldname": "name1",
    "fieldtype": "Data",
-   "label": "Description"
+   "label": "name"
   },
   {
-   "fieldname": "age",
-   "fieldtype": "Int",
-   "label": "Age"
+   "fieldname": "table_adpz",
+   "fieldtype": "Table",
+   "options": "whitelistchild"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-01 19:03:34.184249",
+ "modified": "2026-08-03 16:12:28.578098",
  "modified_by": "Administrator",
  "module": "Assignment",
- "name": "Custom Assigment",
+ "name": "ApiWhitelist",
  "owner": "Administrator",
  "permissions": [
   {

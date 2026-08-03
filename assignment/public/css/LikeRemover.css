@@ -1,0 +1,5 @@
+.like-action,
+.list-liked-by-me,
+[data-action="like"] {
+    display: none !important;
+}
