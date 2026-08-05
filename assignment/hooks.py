@@ -13,6 +13,11 @@ doc_events = {
     }       
 }
 app_include_css = "/assets/assignment/css/LikeRemover.css"
+scheduler_events = {
+    "all": [
+        "assignment.tasks.task"
+    ]
+}
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
