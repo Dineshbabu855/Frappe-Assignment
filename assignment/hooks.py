@@ -14,7 +14,7 @@ doc_events = {
 }
 app_include_css = "/assets/assignment/css/LikeRemover.css"
 scheduler_events = {
-    "all": [
+    "daily": [
         "assignment.tasks.task"
     ]
 }
