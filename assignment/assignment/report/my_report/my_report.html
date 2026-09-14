@@ -1,0 +1,31 @@
+<div class="print-heading">
+    <h2>My Report</h2>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Posting Date</th>
+            <th>Customer</th>
+            <th class="text-right">Amount</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% for (var i = 0; i < data.length; i++) { %>
+            <tr>
+                <td>
+                    <%= dateutil.str_to_user(data[i].posting_date) %>
+                </td>
+
+                <td>
+                    <%= data[i].customer %>
+                </td>
+
+                <td class="text-right">
+                    <%= format_money(data[i].amount) %>
+                </td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
