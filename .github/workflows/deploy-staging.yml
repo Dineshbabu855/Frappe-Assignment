@@ -1,0 +1,56 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    name: Deploy to Staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install SSH client
+        run: sudo apt-get update && sudo apt-get install -y openssh-client
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          SSH_PORT: ${{ secrets.STAGING_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p "$SSH_PORT" "${{ secrets.STAGING_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        env:
+          SSH_USER: ${{ secrets.STAGING_USER }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_PORT: ${{ secrets.STAGING_PORT }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" << 'EOF'
+            set -e
+            cd ~/frappe-bench
+            # Update app
+            if [ -d apps/assignment ]; then
+              cd apps/assignment && git fetch origin && git reset --hard origin/main && cd ../..
+            else
+              bench get-app assignment https://github.com/Dineshbabu855/Frappe-Assignment.git
+            fi
+            bench setup requirements --dev
+            bench --site staging-site install-app assignment || bench --site staging-site migrate
+            bench build
+            bench restart
+          EOF
