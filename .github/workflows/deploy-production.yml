@@ -1,0 +1,56 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - production
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    name: Deploy to Production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install SSH client
+        run: sudo apt-get update && sudo apt-get install -y openssh-client
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          SSH_PORT: ${{ secrets.PRODUCTION_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p "$SSH_PORT" "${{ secrets.PRODUCTION_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        env:
+          SSH_USER: ${{ secrets.PRODUCTION_USER }}
+          SSH_HOST: ${{ secrets.PRODUCTION_HOST }}
+          SSH_PORT: ${{ secrets.PRODUCTION_PORT }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" << 'EOF'
+            set -e
+            cd ~/frappe-bench
+            # Update app
+            if [ -d apps/assignment ]; then
+              cd apps/assignment && git fetch origin && git reset --hard origin/production && cd ../..
+            else
+              bench get-app assignment https://github.com/Dineshbabu855/Frappe-Assignment.git
+            fi
+            bench setup requirements --dev
+            bench --site production-site install-app assignment || bench --site production-site migrate
+            bench build
+            bench restart
+          EOF
